@@ -1,0 +1,193 @@
+<html>
+<head>
+  <title>Victorian Subdivisions</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+  <link rel="stylesheet" href="css/MarkerCluster.css"/>
+  <link rel="stylesheet" href="css/MarkerCluster.Default.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+  <script src="js/leaflet.markercluster.js"></script>
+  <script src="jquery-2.1.1.min.js"></script> 
+  <!-- ESRI library-->
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+    crossorigin=""></script>
+  <style>
+    #map{ height: 85% }
+  </style>
+</head>
+<body>
+
+	<h1>Victorian Subdivisions</h1>
+	<img src="images/intrax.png" alt="Intrax Logo" style="width:180px;height:54px;
+            position: absolute;
+            left: 0px;
+            top: 0px;">
+
+  	<div id="map"></div>
+
+  	<script>
+	
+		//Base map layers
+		mapLink = 
+				'<a href="http://www.esri.com/">Esri</a>';
+		wholink = 
+				'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+
+		var Streetmap = L.tileLayer(
+				'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+				attribution: '&copy; '+mapLink+', '+wholink,
+				maxZoom: 18,
+				}),
+			Satellite = L.tileLayer(
+				'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+				attribution: '&copy; '+mapLink+', '+wholink,
+				maxZoom: 18,
+				}),
+			Topographic = L.tileLayer(
+				'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+				attribution: '&copy; '+mapLink+', '+wholink,
+				maxZoom: 18,
+				});
+
+		var baseMaps = {
+			"Streetmap": Streetmap,
+			"Satellite": Satellite,
+			"Topographic": Topographic
+		};
+		// initialize the map
+		var map = L.map('map', {scrollWheelZoom: true,
+								layers: [Satellite]}).setView([-37.25, 144.87], 8);
+		L.control.layers(baseMaps).addTo(map);
+		/*
+		mapLink = 
+				'<a href="http://www.esri.com/">Esri</a>';
+		wholink = 
+				'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+		L.tileLayer(
+				'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+				attribution: '&copy; '+mapLink+', '+wholink,
+				maxZoom: 18,
+				}).addTo(map);
+		*/
+
+		
+				
+		
+	// load a tile layer
+	/*
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		maxZoom: 18,
+		id: 'mapbox/satellite-v9',
+		tileSize: 512,
+		zoomOffset: -1,
+		accessToken: 'pk.eyJ1Ijoic2RwMDUiLCJhIjoiY2tkbXp0NjIxMDY4dTJxbW1xODh1MHQweSJ9.W1Du1j8qhDDTvorlERCB2g'
+		}).addTo(map);
+	
+	L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png',
+		{
+		attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+		maxZoom: 17,
+		minZoom: 9
+		}).addTo(map);
+	*/  
+		$.getJSON("vicGovtAreas.geojson",function(LGAs){
+			L.geoJson( LGAs  , {
+				style: function(feature){
+				return { color: "#000000", weight: 1, fillColor: "#28D91A", fillOpacity: .2 };
+				},
+				onEachFeature: function( feature, layer ){
+					layer.bindPopup( "<strong>" + feature.properties.vic_lga__2 )
+					
+					/*
+					layer.on('mouseover', function () {
+					this.setStyle({
+						'fillColor': '#0000ff'
+					});
+					});
+					layer.on('mouseout', function () {
+					this.setStyle({
+						'fillColor': '#ff0000'
+					});
+					});
+					layer.on('mouseover', function (e) {autoPan: false
+						this.openPopup();
+					});
+					layer.on('mouseout', function (e) {autoPan: false
+						this.closePopup();
+					});
+					*/
+					
+				}
+			}  ).addTo(map);
+			});
+
+		// Set pin icon
+
+		
+		// load GeoJSON from an external file
+		//var allSubs = L.layerGroup()
+		//var up100 = L.layerControl()
+		/*var up80 = L.layerControl()
+		var up60 = L.layerControl()
+		var up40 = L.layerControl()
+		var up20 = L.layerControl()*/
+		$.getJSON("vic_plans_aug2020_aug2019.geojson",function(data){
+				var houseIcon = L.icon({
+				iconUrl: 'real-estate.png',
+				iconSize: [30,45]
+				});
+				var subdivisions = L.geoJson(data,{
+					pointToLayer: function(feature,latlng){
+						var marker = L.marker(latlng,{icon: houseIcon});
+					
+						marker.bindPopup("Plan Number: " + feature.properties.PlanNumber + '<br/>Number Of Lots: ' + feature.properties.LotNumber
+							+ '<br/>Locaility: ' + feature.properties.locality + '<br/>LGA: ' + feature.properties.LGA);
+						return marker;
+						var layerControl = new L.Control.Layers(null, {
+						'Subdivisions': marker
+						}).addTo(map);
+					}
+				//}
+				});
+				var clusters = L.markerClusterGroup();
+				clusters.addLayer(subdivisions);
+				map.addLayer(clusters);
+			
+			});
+		
+		
+		/*
+		function onEachFeature(feature, layer) {
+			var popupContent = "<p>DaTerra Web</p>";
+			console.log(feature.properties["PlanNumber"])
+			if (feature.properties && feature.properties.popupContent) {
+				popupContent += feature.properties.popupContent;
+				console.log(popupContent)
+				}
+				layer.bindPopup(popupContent);
+			}
+		*/
+		/*
+		$.getJSON("rodents.geojson",function(data){
+			var ratIcon = L.icon({
+			iconUrl: 'http://andywoodruff.com/maptime-leaflet/rat.png',
+			iconSize: [60,50]
+			});
+			var rodents = L.geoJson(data,{
+			pointToLayer: function(feature,latlng){
+				var marker = L.marker(latlng,{icon: ratIcon});
+				marker.bindPopup(feature.properties.Location + '<br/>' + feature.properties.OPEN_DT);
+				return marker;
+			}
+			});
+			
+		var clusters = L.markerClusterGroup();
+		clusters.addLayer(subdivisions);
+		map.addLayer(clusters);
+		*/
+	
+  	</script>
+</body>
+</html>
