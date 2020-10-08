@@ -1,0 +1,29 @@
+html {
+    font-family: 'Playfair Display', serif;
+    font-size: 10px;
+    /*background-color: #00539F;*/
+    /*background-image: linear-gradient(to top right, #F3F6F2,#085D03);*/
+    height: 100%;
+  }
+
+  h1 {
+    font-size: 60px;
+    text-align: center;
+    margin: 0;
+    padding: 20px 0;    
+    color: black;
+  }
+  
+  p, li {
+    font-size: 16px;    
+    line-height: 2;
+    letter-spacing: 1px;
+
+  }
+/*
+  #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      height: 80%;
+  }*/
